@@ -1,0 +1,16 @@
+HELP.md
+target/
+./smartContactManager/mvn/wrapper/maven-wrapper.jar
+!**/smartContactManager//src/main/**/target/
+!**/smartContactManager//src/test/**/target/
+
+### STS ###
+./smartContactManager/apt_generated
+./smartContactManager/classpath
+./smartContactManager/factorypath
+./smartContactManager/project
+./smartContactManager/settings
+./smartContactManager/springBeans
+./smartContactManager/sts4-cache
+
+

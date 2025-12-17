@@ -10,6 +10,17 @@
 			<div class="row">
 				<div class="col-md-8 offset-md-2">
 					<div class="my-card mt-2">
+						
+						<!--Alert for success or fail-->
+						<div th:if="${message}"
+						     class="alert"
+						     th:classappend="${message.type}"
+						     role="alert">
+
+						    <p class="text-center" th:text="${message.content}"></p>
+
+						</div>
+							
 						<div class="container text-center">
 							<img style="width:100px;" th:src="@{/img/register.png}" alt="register img"/>
 						</div>
@@ -60,7 +71,7 @@
 							<!--user about field-->
 							<div class="form-group">
 							    <textarea 
-									th:value="${user.about}"
+									th:text="${user.about}"
 									placeholder="Enter something about yourself"
 									name="about" 
 									id="about"

@@ -8,9 +8,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.smart.dao.UserRepository;
 import com.smart.entities.User;
+import com.smart.helper.Message;
+
 
 @Controller
 public class HomeController {
@@ -52,16 +55,28 @@ public class HomeController {
 	public String registeruser(
 			@ModelAttribute("user") User user,
 			@RequestParam(value="agreement",defaultValue = "false") boolean agreement,
-			Model model) {
-		if(!agreement) {
-			System.out.print("You have not agreed the terms and condition");
+			Model model,
+			RedirectAttributes redirectAttributes) {
+		try {
+			if(!agreement) {
+				System.out.print("You have not agreed the terms and condition");
+				throw new Exception("You have not agreed the terms and condition");
+			}
+			user.setRole("ROLE_USER");
+			user.setEnabled(true);
+			System.out.print("Agreement"+agreement);
+			System.out.print("User"+user);
+			User result = this.userRepository.save(user);
+			model.addAttribute("user", result);
+			redirectAttributes.addFlashAttribute("message", new Message("Successfully registered!!", "alert-success"));
+			return "redirect:/signup";
+
+		}catch(Exception e) {
+			e.printStackTrace();
+			model.addAttribute("user", user);
+			redirectAttributes.addFlashAttribute("message", new Message("Something went wrong!!" + e.getMessage(),"alert-danger"));
+			return "redirect:/signup";
 		}
-		user.setRole("ROLE_USER");
-		user.setEnabled(true);
-		System.out.print("Agreement"+agreement);
-		System.out.print("User"+user);
-		User result = this.userRepository.save(user);
-		model.addAttribute("user", result);
-		return "signup";
+		
 	}
 }

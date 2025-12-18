@@ -3,6 +3,7 @@ package com.smart.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.smart.dao.UserRepository;
 import com.smart.entities.User;
 import com.smart.helper.Message;
+
+import jakarta.validation.Valid;
 
 
 @Controller
@@ -43,6 +46,8 @@ public class HomeController {
 		model.addAttribute("title", "About - Smart contact manager");
 		return "about";
 	}
+	
+	//handler for register view
 	@GetMapping("/signup")
 	public String signup(Model model) {
 		model.addAttribute("title", "Register - Smart contact manager");
@@ -53,7 +58,8 @@ public class HomeController {
 	//this handler for registering user
 	@PostMapping("/do_register")
 	public String registeruser(
-			@ModelAttribute("user") User user,
+			@Valid @ModelAttribute("user") User user,
+			BindingResult result,
 			@RequestParam(value="agreement",defaultValue = "false") boolean agreement,
 			Model model,
 			RedirectAttributes redirectAttributes) {
@@ -62,12 +68,17 @@ public class HomeController {
 				System.out.print("You have not agreed the terms and condition");
 				throw new Exception("You have not agreed the terms and condition");
 			}
+			if(result.hasErrors()) {
+				System.out.print("ERROR"+result.toString());
+				model.addAttribute("user", user);
+				return "signup";
+			}
 			user.setRole("ROLE_USER");
 			user.setEnabled(true);
 			System.out.print("Agreement"+agreement);
 			System.out.print("User"+user);
-			User result = this.userRepository.save(user);
-			model.addAttribute("user", result);
+			User userData = this.userRepository.save(user);
+			model.addAttribute("user", userData);
 			redirectAttributes.addFlashAttribute("message", new Message("Successfully registered!!", "alert-success"));
 			return "redirect:/signup";
 

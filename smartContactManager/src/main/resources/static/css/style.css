@@ -16,3 +16,7 @@ body{
 	padding:20px;
 	background: #FFFFFF;
 }
+.invalid-feedback ul {
+    padding-left: 1rem;
+    margin-bottom: 0;
+}
